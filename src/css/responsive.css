@@ -1,0 +1,38 @@
+/* Responsive Styling & Custom Mockup Frame Locks */
+
+/* Custom breakpoint overrides and device styling */
+@media (max-width: 480px) {
+  body {
+    background-color: var(--color-background);
+  }
+}
+
+/* Device mockup lock rules */
+.phone-mockup-frame {
+  width: 100%;
+  max-width: 412px;
+  height: 100vh;
+  max-height: 860px;
+  border-radius: 40px;
+  border: 10px solid #201512;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 138, 122, 0.1);
+}
+
+@media (max-width: 640px) {
+  .phone-mockup-frame {
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+}
+
+/* Safe areas for mobile viewport styling */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}

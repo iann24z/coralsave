@@ -1,0 +1,11 @@
+/* NabunYuk PHP Responsive styling rules */
+
+@media (max-width: 480px) {
+  body {
+    background-color: var(--color-background);
+  }
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
