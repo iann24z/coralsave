@@ -12,7 +12,8 @@ export default async function handler(req: any, res: any) {
   if (req.method === "GET" && path === "tabungan") {
     const { data: targets } = await supabase.from("cs_targets").select("*").order("created_at", { ascending: false });
     const { data: transactions } = await supabase.from("cs_transactions").select("*").order("created_at", { ascending: false });
-    return res.json({ targets: targets || [], transactions: transactions || [], qris_image: "" });
+    const { data: settings } = await supabase.from("cs_settings").select("value").eq("key", "qris_image").single();
+    return res.json({ targets: targets || [], transactions: transactions || [], qris_image: settings?.value || "" });
   }
 
   // POST /api/tabungan/nabung
@@ -96,6 +97,20 @@ export default async function handler(req: any, res: any) {
     const { data: targets } = await supabase.from("cs_targets").select("*");
     return res.json({ success: true, targets });
   }
+
+// POST /api/tabungan/qris
+  if (req.method === "POST" && path === "tabungan/qris") {
+    const { qris_image } = req.body;
+    await supabase.from("cs_targets").update({ qris_image: qris_image || "" }).eq("id", "target-1");
+    return res.json({ success: true, qris_image: qris_image || "" });
+  }
+
+  // GET /api/tabungan/qris
+  if (req.method === "GET" && path === "tabungan/qris") {
+    const { data } = await supabase.from("cs_targets").select("qris_image").eq("id", "target-1").single();
+    return res.json({ success: true, qris_image: data?.qris_image || "" });
+  }
+
 
   return res.status(404).json({ error: "Route not found" });
 }
