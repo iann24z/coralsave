@@ -99,11 +99,12 @@ export default async function handler(req: any, res: any) {
   }
 
 // POST /api/tabungan/qris
-  if (req.method === "POST" && path === "tabungan/qris") {
-    const { qris_image } = req.body;
-    await supabase.from("cs_targets").update({ qris_image: qris_image || "" }).eq("id", "target-1");
-    return res.json({ success: true, qris_image: qris_image || "" });
-  }
+  // POST /api/tabungan/qris
+if (req.method === "POST" && path === "tabungan/qris") {
+  const { qris_image } = req.body;
+  await supabase.from("cs_settings").upsert({ key: "qris_image", value: qris_image || "" });
+  return res.json({ success: true, qris_image: qris_image || "" });
+}
 
   // GET /api/tabungan/qris
   if (req.method === "GET" && path === "tabungan/qris") {
