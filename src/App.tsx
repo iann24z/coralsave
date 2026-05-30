@@ -759,6 +759,12 @@ const handleClearQris2 = () => {
         }
       } catch {
         showToast("Koneksi gagal ke server", "error");
+      } finally {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+      }
+    }
+  });
+};
 
   // Calculate stats metrics
   const totalTransactionsCount = transactions.length;
