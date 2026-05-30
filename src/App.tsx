@@ -992,7 +992,7 @@ const handleClearQris2 = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] uppercase font-mono font-extrabold text-zinc-500">Kode QRIS Ke-2:</span>
                   <span className="text-[10px] font-bold text-zinc-650">
-                    {qrisImage2 ? "Kustom Aktif ✅" : "Belum Diatur ⚙️"}
+                    {qrisImage2 ? "Kustom Aktif" : "Belum Diatur"}
                   </span>
                 </div>
 
