@@ -13,7 +13,8 @@ export default async function handler(req: any, res: any) {
     const { data: targets } = await supabase.from("cs_targets").select("*").order("created_at", { ascending: false });
     const { data: transactions } = await supabase.from("cs_transactions").select("*").order("created_at", { ascending: false });
     const { data: settings } = await supabase.from("cs_settings").select("value").eq("key", "qris_image").single();
-    return res.json({ targets: targets || [], transactions: transactions || [], qris_image: settings?.value || "" });
+    const { data: settings2 } = await supabase.from("cs_settings").select("value").eq("key", "qris_image_2").single();
+    return res.json({ targets: targets || [], transactions: transactions || [], qris_image: settings?.value || "", qris_image_2: settings2?.value || "" });
   }
 
   // POST /api/tabungan/nabung
@@ -110,6 +111,19 @@ if (req.method === "POST" && path === "tabungan/qris") {
   if (req.method === "GET" && path === "tabungan/qris") {
     const { data } = await supabase.from("cs_targets").select("qris_image").eq("id", "target-1").single();
     return res.json({ success: true, qris_image: data?.qris_image || "" });
+  }
+
+  // POST /api/tabungan/qris2
+  if (req.method === "POST" && path === "tabungan/qris2") {
+    const { qris_image } = req.body;
+    await supabase.from("cs_settings").upsert({ key: "qris_image_2", value: qris_image || "" });
+    return res.json({ success: true, qris_image: qris_image || "" });
+  }
+
+  // GET /api/tabungan/qris2
+  if (req.method === "GET" && path === "tabungan/qris2") {
+    const { data } = await supabase.from("cs_settings").select("value").eq("key", "qris_image_2").single();
+    return res.json({ success: true, qris_image: data?.value || "" });
   }
 
 

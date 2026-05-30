@@ -302,6 +302,8 @@ export default function App() {
   // Custom QRIS image state
   const [qrisImage, setQrisImage] = useState<string>("");
   const qrisFileInputRef = useRef<HTMLInputElement>(null);
+  const [qrisImage2, setQrisImage2] = useState<string>("");
+  const qrisFileInputRef2 = useRef<HTMLInputElement>(null);
 
   // Fetch initial data from server
   const fetchData = async () => {
@@ -313,6 +315,7 @@ export default function App() {
         setTargets(data.targets || []);
         setTransactions(data.transactions || []);
         setQrisImage(data.qris_image || "");
+        setQrisImage2(data.qris_image_2 || "");
       } else {
         showToast("Gagal memuat data dari database", "error");
       }
@@ -703,6 +706,60 @@ export default function App() {
     });
   };
 
+  // Handle uploaded custom QRIS image 2
+const handleQrisUpload2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (e.target.files && e.target.files[0]) {
+    const file = e.target.files[0];
+    if (!file.type.startsWith("image/")) {
+      showToast("Harap pilih berkas gambar saja", "error");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      showToast("Ukuran gambar maksimal 8MB", "error");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result as string;
+      try {
+        const res = await fetch("/api/tabungan/qris2", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ qris_image: base64 })
+        });
+        if (res.ok) {
+          setQrisImage2(base64);
+          showToast("Kode QRIS 2 berhasil diperbarui!", "success");
+        } else {
+          showToast("Gagal memperbarui kode QRIS 2", "error");
+        }
+      } catch {
+        showToast("Koneksi gagal ke server", "error");
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+const handleClearQris2 = () => {
+  setConfirmModal({
+    isOpen: true,
+    title: "Reset QRIS 2 ke Bawaan",
+    message: "Apakah Anda yakin ingin menghapus QRIS 2?",
+    onConfirm: async () => {
+      try {
+        const res = await fetch("/api/tabungan/qris2", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ qris_image: "" })
+        });
+        if (res.ok) {
+          setQrisImage2("");
+          showToast("QRIS 2 telah dihapus", "info");
+        }
+      } catch {
+        showToast("Koneksi gagal
+
   // Calculate stats metrics
   const totalTransactionsCount = transactions.length;
   const pendingTransactionsCount = transactions.filter(tx => tx.status === "pending").length;
@@ -930,6 +987,53 @@ export default function App() {
                 </div>
               </div>
 
+{/* QRIS KE-2 */}
+              <div className="flex flex-col gap-2 p-3 bg-zinc-50 border border-zinc-150 rounded-2xl">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] uppercase font-mono font-extrabold text-zinc-500">Kode QRIS Ke-2:</span>
+                  <span className="text-[10px] font-bold text-zinc-650">
+                    {qrisImage2 ? "Kustom Aktif ✅" : "Belum Diatur ⚙️"}
+                  </span>
+                </div>
+
+                {qrisImage2 && (
+                  <div className="relative mx-auto w-40 h-40 bg-white border-2 border-zinc-200 rounded-2xl p-2 shadow-inner flex items-center justify-center overflow-hidden">
+                    <img
+                      src={qrisImage2}
+                      alt="Kode QRIS 2"
+                      className="w-full h-full object-contain rounded-xl"
+                    />
+                  </div>
+                )}
+
+                <input
+                  type="file"
+                  ref={qrisFileInputRef2}
+                  onChange={handleQrisUpload2}
+                  accept="image/*"
+                  className="hidden"
+                />
+
+                <div className="flex gap-1.5 mt-1">
+                  <button
+                    onClick={() => qrisFileInputRef2.current?.click()}
+                    className="flex-1 flex items-center justify-center gap-1.5 bg-[#FF8A7A]/10 text-primary hover:bg-[#FF8A7A]/20 border border-primary/20 text-[10px] font-black uppercase py-2.5 rounded-xl transition duration-150"
+                  >
+                    <Upload className="w-3.5 h-3.5" /> {qrisImage2 ? "Ganti QRIS 2" : "Upload QRIS 2"}
+                  </button>
+
+                  {qrisImage2 && (
+                    <button
+                      onClick={handleClearQris2}
+                      className="flex-none p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition duration-150"
+                      title="Hapus QRIS 2"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+              
               {/* Quick actions download + copy details */}
               <div className="flex gap-2.5">
                 <button 
