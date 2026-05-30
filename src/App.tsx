@@ -758,7 +758,7 @@ const handleClearQris2 = () => {
           showToast("QRIS 2 telah dihapus", "info");
         }
       } catch {
-        showToast("Koneksi gagal
+        showToast("Koneksi gagal ke server", "error");
 
   // Calculate stats metrics
   const totalTransactionsCount = transactions.length;
@@ -1033,7 +1033,7 @@ const handleClearQris2 = () => {
                   )}
                 </div>
               </div>
-              
+
               {/* Quick actions download + copy details */}
               <div className="flex gap-2.5">
                 <button 
